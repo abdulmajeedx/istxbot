@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تواصل معنا - {{ site_settings.site_title }}</title>
+    <style>
+        :root {
+            --bg: {{ site_settings.bg_color }}; --card: {{ site_settings.card_color }}; --accent: {{ site_settings.accent_color }};
+            --text: #e0e0e0; --text-muted: #888; --border: #2a2a4a; --cyan: {{ site_settings.cyan_color }};
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg); color: var(--text);
+            min-height: 100vh; padding: 32px 20px;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        .back-link { color: var(--cyan); text-decoration: none; font-size: 13px; }
+        .back-link:hover { text-decoration: underline; }
+
+        .header { text-align: center; margin: 24px 0 32px; }
+        .header h1 {
+            font-size: 24px; font-weight: 800;
+            background: linear-gradient(135deg, #fe2c55, #25f4ee);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p { color: var(--text-muted); margin-top: 6px; font-size: 14px; }
+
+        .card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 24px; margin-bottom: 16px;
+        }
+        .card h2 {
+            font-size: 16px; color: #fff; margin-bottom: 16px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .card h2 .icon { font-size: 22px; }
+
+        .contact-method {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px; background: rgba(255,255,255,0.03);
+            border-radius: 12px; margin-bottom: 10px;
+            text-decoration: none; color: inherit; transition: background 0.2s;
+        }
+        .contact-method:hover { background: rgba(255,255,255,0.06); }
+
+        .contact-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; flex-shrink: 0;
+        }
+        .contact-icon.whatsapp { background: rgba(37,211,102,0.15); color: #25d366; }
+        .contact-icon.telegram { background: rgba(0,136,204,0.15); color: #08c; }
+        .contact-icon.email { background: rgba(254,44,85,0.15); color: #fe2c55; }
+
+        .contact-info { flex: 1; min-width: 0; }
+        .contact-info strong { display: block; font-size: 14px; color: #fff; }
+        .contact-info span { font-size: 13px; color: var(--text-muted); direction: ltr; display: block; }
+
+        .note {
+            font-size: 12px; color: #666; text-align: center;
+            margin-top: 12px; line-height: 1.6;
+        }
+
+        .footer {
+            text-align: center; margin-top: 32px;
+            color: #444; font-size: 11px;
+        }
+        .footer a { color: #666; text-decoration: none; margin: 0 8px; }
+        .footer a:hover { color: #999; }
+
+        @media (max-width: 480px) {
+            .card { padding: 18px; }
+            .contact-method { padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← العودة للتحميل</a>
+
+        <div class="header" style="text-align:center;margin:24px 0 32px;">
+            {% if site_settings.logo_url %}
+            <div style="width:48px;height:48px;margin:0 auto 12px;border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(135deg, {{ site_settings.accent_color }}, {{ site_settings.cyan_color }});">
+                <img src="{{ site_settings.logo_url }}" style="width:80%;height:80%;object-fit:contain;" alt="logo">
+            </div>
+            {% elif site_settings.logo_svg %}
+            <div style="width:48px;height:48px;margin:0 auto 12px;background:linear-gradient(135deg, {{ site_settings.accent_color }}, {{ site_settings.cyan_color }});border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(254,44,85,0.25);">
+                <div style="width:26px;height:26px;">{{ site_settings.logo_svg | safe }}</div>
+            </div>
+            {% endif %}
+            <h1>📞 تواصل معنا</h1>
+            <p>للاستفسار والدعم الفني وطلب الاشتراكات</p>
+        </div>
+
+        <div class="card">
+            <h2><span class="icon">💬</span> قنوات التواصل</h2>
+
+            <a href="https://wa.me/{{ site_settings.contact_phone }}" class="contact-method" target="_blank">
+                <div class="contact-icon whatsapp">
+                    {% if site_settings.contact_whatsapp_icon %}
+                    <img src="{{ site_settings.contact_whatsapp_icon }}" style="width:28px;height:28px;object-fit:contain;">
+                    {% else %}📱{% endif %}
+                </div>
+                <div class="contact-info">
+                    <strong>{{ site_settings.contact_whatsapp_label }}</strong>
+                    <span>{{ site_settings.contact_phone }}</span>
+                </div>
+            </a>
+
+            <a href="https://t.me/{{ site_settings.contact_telegram }}" class="contact-method" target="_blank">
+                <div class="contact-icon telegram">
+                    {% if site_settings.contact_telegram_icon %}
+                    <img src="{{ site_settings.contact_telegram_icon }}" style="width:28px;height:28px;object-fit:contain;">
+                    {% else %}✈{% endif %}
+                </div>
+                <div class="contact-info">
+                    <strong>{{ site_settings.contact_telegram_label }}</strong>
+                    <span>@{{ site_settings.contact_telegram }}</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="note">
+            للاستفسار عن الاشتراكات ومفاتيح التفعيل المميزة يرجى التواصل عبر الواتساب أو التيليجرام
+        </div>
+
+        <div class="footer">
+            {{ site_settings.footer_text }} ·
+            <a href="/">الرئيسية</a> ·
+            <a href="/help">شرح الاستخدام</a> ·
+            <a href="/account">حسابي</a>
+        </div>
+    </div>
+</body>
+</html>

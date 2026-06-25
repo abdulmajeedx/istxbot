@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حسابي - {{ site_settings.site_title }}</title>
+    <style>
+        :root {
+            --bg: {{ site_settings.bg_color }}; --card: {{ site_settings.card_color }}; --accent: {{ site_settings.accent_color }};
+            --text: #e0e0e0; --text-muted: #888; --border: #2a2a4a; --cyan: {{ site_settings.cyan_color }};
+            --success: #00c853; --error: #ff1744;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { touch-action: manipulation; -webkit-text-size-adjust: 100%; overflow-x: hidden; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg); color: var(--text);
+            min-height: 100vh; min-height: 100dvh; padding: 32px 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 500px; margin: 0 auto; width: 100%; }
+        .back-link { color: var(--cyan); text-decoration: none; font-size: 13px; }
+        .back-link:hover { text-decoration: underline; }
+
+        .header { text-align: center; margin: 24px 0 32px; }
+        .header h1 {
+            font-size: 24px; font-weight: 800;
+            background: linear-gradient(135deg, #fe2c55, #25f4ee);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 0; margin-bottom: 16px; }
+        .tab {
+            flex: 1; text-align: center; padding: 12px;
+            background: var(--card); border: 1px solid var(--border);
+            cursor: pointer; font-size: 13px; font-weight: 600; color: #888;
+            transition: all 0.2s;
+        }
+        .tab:first-child { border-radius: 0 12px 12px 0; }
+        .tab:last-child { border-radius: 12px 0 0 12px; }
+        .tab.active { color: #fff; border-color: var(--accent); background: rgba(254,44,85,0.08); }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Card */
+        .card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 24px; margin-bottom: 16px;
+            position: relative; overflow: hidden;
+        }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block; font-size: 13px; font-weight: 600;
+            color: var(--text-muted); margin-bottom: 8px;
+        }
+        .form-group input {
+            width: 100%; padding: 14px 16px;
+            background: #16213e; border: 1.5px solid var(--border);
+            border-radius: 12px; color: var(--text); font-size: 16px;
+            outline: none; max-width: 100%; -webkit-appearance: none;
+        }
+        .form-group input.ltr { direction: ltr; text-align: left; }
+        .form-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(254,44,85,0.15);
+        }
+
+        .btn {
+            width: 100%; padding: 14px; background: var(--accent);
+            color: #fff; border: none; border-radius: 12px;
+            font-size: 15px; font-weight: 700; cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #ef2950; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn.secondary { background: transparent; border: 1px solid var(--border); }
+        .btn.secondary:hover { background: rgba(255,255,255,0.05); }
+
+        .alert {
+            padding: 12px 16px; border-radius: 10px; font-size: 14px;
+            margin-bottom: 16px; display: none; line-height: 1.6;
+        }
+        .alert.show { display: block; }
+        .alert.success { background: rgba(0,200,83,0.1); color: var(--success); border: 1px solid rgba(0,200,83,0.2); }
+        .alert.error { background: rgba(255,23,68,0.1); color: var(--error); border: 1px solid rgba(255,23,68,0.2); }
+        .alert.info { background: rgba(37,244,238,0.1); color: var(--cyan); border: 1px solid rgba(37,244,238,0.2); }
+
+        .key-item {
+            padding: 12px; background: rgba(255,255,255,0.03);
+            border-radius: 10px; margin-bottom: 8px;
+        }
+        .key-item .key-val {
+            font-family: monospace; font-size: 14px; color: #fff; direction: ltr;
+            word-break: break-all;
+        }
+        .key-item .key-meta {
+            font-size: 11px; color: #888; margin-top: 4px;
+            display: flex; gap: 16px; flex-wrap: wrap;
+        }
+        .key-item.inactive { opacity: 0.5; }
+        .key-item.inactive .key-val { text-decoration: line-through; }
+
+        .footer {
+            text-align: center; margin-top: 32px; color: #444; font-size: 11px;
+        }
+        .footer a { color: #666; text-decoration: none; margin: 0 8px; }
+        .footer a:hover { color: #999; }
+
+        @media (max-width: 480px) {
+            body { padding: 12px; }
+            .container { max-width: 100%; }
+            .header { margin: 12px 0 16px; }
+            .header h1 { font-size: 20px; }
+            .card { padding: 14px; border-radius: 12px; margin-bottom: 12px; }
+            .form-group { margin-bottom: 12px; }
+            .form-group label { font-size: 12px; margin-bottom: 5px; }
+            .form-group input { padding: 12px 12px; font-size: 16px; border-radius: 10px; }
+            .btn { padding: 13px; font-size: 15px; border-radius: 10px; min-height: 48px; }
+            .tab { padding: 12px 6px; font-size: 12px; min-height: 44px; display: flex; align-items: center; justify-content: center; }
+            .tab:first-child { border-radius: 0 10px 10px 0; }
+            .tab:last-child { border-radius: 10px 0 0 10px; }
+            .back-link { font-size: 12px; display: block; margin-bottom: 4px; }
+            .footer { margin-top: 20px; font-size: 10px; }
+            .footer a { margin: 0 4px; }
+            .key-item { padding: 10px; }
+            .key-item .key-val { font-size: 13px; }
+            .key-item .key-meta { gap: 6px; font-size: 10px; }
+            .alert { font-size: 13px; padding: 10px 12px; }
+            #recoverOtp { font-size: 18px !important; letter-spacing: 4px !important; }
+        }
+        @media (max-width: 360px) {
+            body { padding: 10px 8px; }
+            .card { padding: 12px; }
+            .header h1 { font-size: 18px; }
+            .tab { padding: 10px 4px; font-size: 11px; }
+            .form-group input { padding: 11px 10px; font-size: 16px; }
+            .btn { padding: 12px; font-size: 14px; }
+            .footer { font-size: 9px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← العودة للتحميل</a>
+
+        <div class="header" style="text-align:center;margin:24px 0 32px;">
+            {% if site_settings.logo_url %}
+            <div style="width:48px;height:48px;margin:0 auto 12px;border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(135deg, {{ site_settings.accent_color }}, {{ site_settings.cyan_color }});">
+                <img src="{{ site_settings.logo_url }}" style="width:80%;height:80%;object-fit:contain;" alt="logo">
+            </div>
+            {% elif site_settings.logo_svg %}
+            <div style="width:48px;height:48px;margin:0 auto 12px;background:linear-gradient(135deg, {{ site_settings.accent_color }}, {{ site_settings.cyan_color }});border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(254,44,85,0.25);">
+                <div style="width:26px;height:26px;">{{ site_settings.logo_svg | safe }}</div>
+            </div>
+            {% endif %}
+            <h1>👤 حسابي</h1>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="recover" id="tab-recover-btn">استرجاع المفتاح</div>
+            <div class="tab" data-tab="subscribe" id="tab-subscribe-btn">طلب اشتراك</div>
+        </div>
+
+        <!-- استرجاع المفتاح -->
+        <div class="tab-content active" id="tab-recover">
+            <div class="card">
+                <div id="recoverAlert" class="alert"></div>
+                <div id="recoverStep1">
+                    <div class="form-group">
+                        <label>البريد الإلكتروني المسجل</label>
+                        <input type="email" id="recoverEmail" placeholder="example@email.com" autocomplete="email" class="ltr">
+                    </div>
+                    <button class="btn" id="recoverBtn">🔍 بحث عن مفاتيحي</button>
+                </div>
+                <div id="recoverStep2" style="display:none">
+                    <p style="font-size:13px;color:#888;text-align:center;margin-bottom:14px">تم إرسال رمز تحقق إلى بريدك الإلكتروني</p>
+                    <div class="form-group">
+                        <label>رمز التحقق (OTP)</label>
+                        <input type="text" id="recoverOtp" placeholder="000000" maxlength="6" autocomplete="off" dir="ltr" style="text-align:center;font-size:22px;letter-spacing:6px">
+                    </div>
+                    <button class="btn" id="recoverVerifyBtn">✅ تأكيد الرمز</button>
+                </div>
+                <div id="recoverResult" style="margin-top:16px"></div>
+            </div>
+        </div>
+
+        <!-- طلب اشتراك -->
+        <div class="tab-content" id="tab-subscribe">
+            <div class="card">
+                <div id="subscribeAlert" class="alert"></div>
+                <div class="form-group">
+                    <label>الاسم</label>
+                    <input type="text" id="subName" placeholder="اسمك الكريم" maxlength="60" autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" id="subEmail" placeholder="example@email.com" autocomplete="email" class="ltr">
+                </div>
+                <div style="position:absolute;top:-9999px;left:-9999px" aria-hidden="true">
+                    <input type="text" id="subHp" tabindex="-1" autocomplete="off">
+                </div>
+                <input type="hidden" id="subTs">
+                <button class="btn" id="subscribeBtn">📩 تقديم الطلب</button>
+                <p style="font-size:12px;color:#888;margin-top:12px;text-align:center">
+                    بعد تقديم الطلب سيتم التواصل معك عبر البريد أو الواتساب لتفعيل اشتراكك
+                </p>
+            </div>
+        </div>
+
+        <div class="footer">
+            {{ site_settings.footer_text }} ·
+            <a href="/">الرئيسية</a> ·
+            <a href="/help">شرح الاستخدام</a> ·
+            <a href="/contact">تواصل معنا</a>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName, updateHash) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            var tabBtn = document.getElementById('tab-' + tabName + '-btn');
+            var tabContent = document.getElementById('tab-' + tabName);
+            if (tabBtn) tabBtn.classList.add('active');
+            if (tabContent) tabContent.classList.add('active');
+            if (tabName === 'subscribe') {
+                subTs.value = Date.now();
+            }
+            if (updateHash !== false && window.location.hash !== '#' + tabName) {
+                history.replaceState(null, '', '#' + tabName);
+            }
+        }
+
+        // Tabs
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                switchTab(tab.dataset.tab, true);
+            });
+        });
+
+        // Key Recovery
+        const recoverBtn = document.getElementById('recoverBtn');
+        const recoverVerifyBtn = document.getElementById('recoverVerifyBtn');
+        const recoverEmail = document.getElementById('recoverEmail');
+        const recoverOtp = document.getElementById('recoverOtp');
+        const recoverAlert = document.getElementById('recoverAlert');
+        const recoverResult = document.getElementById('recoverResult');
+        const recoverStep1 = document.getElementById('recoverStep1');
+        const recoverStep2 = document.getElementById('recoverStep2');
+
+        function showAlert(el, msg, type) {
+            el.className = 'alert show ' + type;
+            el.textContent = msg;
+        }
+
+        // Step 1: Send OTP
+        recoverBtn.addEventListener('click', async () => {
+            const email = recoverEmail.value.trim();
+            recoverAlert.className = 'alert';
+            recoverResult.innerHTML = '';
+
+            if (!email || !email.includes('@')) {
+                showAlert(recoverAlert, 'الرجاء إدخال بريد إلكتروني صحيح', 'error');
+                return;
+            }
+
+            recoverBtn.disabled = true;
+            recoverBtn.textContent = '⏳ جاري الإرسال...';
+
+            try {
+                const res = await fetch('/api/recover-key', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await res.json();
+
+                if (data.require_otp) {
+                    showAlert(recoverAlert, '📩 ' + data.message, 'info');
+                    recoverStep1.style.display = 'none';
+                    recoverStep2.style.display = 'block';
+                    recoverOtp.focus();
+                } else {
+                    showAlert(recoverAlert, '❌ ' + (data.message || 'خطأ'), 'error');
+                }
+            } catch (err) {
+                showAlert(recoverAlert, '❌ حدث خطأ في الاتصال', 'error');
+            } finally {
+                recoverBtn.disabled = false;
+                recoverBtn.textContent = '🔍 بحث عن مفاتيحي';
+            }
+        });
+
+        // Step 2: Verify OTP
+        recoverVerifyBtn.addEventListener('click', async () => {
+            const email = recoverEmail.value.trim();
+            const otp = recoverOtp.value.trim();
+            recoverAlert.className = 'alert';
+            recoverResult.innerHTML = '';
+
+            if (!otp || otp.length !== 6) {
+                showAlert(recoverAlert, 'الرجاء إدخال رمز التحقق المكون من 6 أرقام', 'error');
+                return;
+            }
+
+            recoverVerifyBtn.disabled = true;
+            recoverVerifyBtn.textContent = '⏳ جاري التحقق...';
+
+            try {
+                const res = await fetch('/api/recover-key', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, otp })
+                });
+                const data = await res.json();
+
+                if (data.success && data.keys && data.keys.length > 0) {
+                    showAlert(recoverAlert, '✅ تم العثور على ' + data.keys.length + ' مفتاح', 'success');
+                    recoverResult.innerHTML = data.keys.map(k => `
+                        <div class="key-item ${k.is_active ? '' : 'inactive'}">
+                            <div class="key-val">${k.key}</div>
+                            <div class="key-meta">
+                                <span>📊 ${k.usage_count}/${k.usage_limit} تحميل</span>
+                                <span>${k.is_active ? '✅ نشط' : '❌ معطل'}</span>
+                                <span>📅 ${k.created_at ? k.created_at.slice(0,10) : ''}</span>
+                                ${k.notes ? '<span>📝 ' + k.notes + '</span>' : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                    recoverStep2.style.display = 'none';
+                    recoverStep1.style.display = 'block';
+                } else {
+                    showAlert(recoverAlert, '❌ ' + (data.message || 'رمز غير صحيح'), 'error');
+                }
+            } catch (err) {
+                showAlert(recoverAlert, '❌ حدث خطأ في الاتصال', 'error');
+            } finally {
+                recoverVerifyBtn.disabled = false;
+                recoverVerifyBtn.textContent = '✅ تأكيد الرمز';
+            }
+        });
+
+        // Enter key for OTP input
+        recoverOtp.addEventListener('keydown', e => { if (e.key==='Enter') recoverVerifyBtn.click(); });
+
+        // Subscription Request
+        const subscribeBtn = document.getElementById('subscribeBtn');
+        const subName = document.getElementById('subName');
+        const subEmail = document.getElementById('subEmail');
+        const subHp = document.getElementById('subHp');
+        const subTs = document.getElementById('subTs');
+        const subscribeAlert = document.getElementById('subscribeAlert');
+
+        subTs.value = Date.now();
+
+        // Restore tab from URL hash on page load
+        if (window.location.hash === '#subscribe') {
+            switchTab('subscribe', false);
+        }
+
+        subscribeBtn.addEventListener('click', async () => {
+            const name = subName.value.trim();
+            const email = subEmail.value.trim();
+            subscribeAlert.className = 'alert';
+
+            if (!email || !email.includes('@')) {
+                showAlert(subscribeAlert, 'الرجاء إدخال بريد إلكتروني صحيح', 'error');
+                return;
+            }
+
+            subscribeBtn.disabled = true;
+            subscribeBtn.textContent = '⏳ جاري الإرسال...';
+
+            try {
+                const res = await fetch('/api/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, ts: parseInt(subTs.value) || 0 })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showAlert(subscribeAlert, '✅ ' + data.message, 'success');
+                    subName.value = '';
+                    subEmail.value = '';
+                } else {
+                    showAlert(subscribeAlert, '❌ ' + (data.message || 'حدث خطأ'), 'error');
+                }
+            } catch (err) {
+                showAlert(subscribeAlert, '❌ حدث خطأ في الاتصال', 'error');
+            } finally {
+                subscribeBtn.disabled = false;
+                subscribeBtn.textContent = '📩 تقديم الطلب';
+            }
+        });
+    </script>
+</body>
+</html>

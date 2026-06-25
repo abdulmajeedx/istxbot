@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+*.egg
+venv/
+.venv/
+env/
+
+# Node.js / React
+node_modules/
+dist/
+.vite/
+*.log
+
+# Gradle / Java
+.gradle/
+build/
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment / Secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+service-account.json
+local.properties
+*-cache.json
+
+# Data
+data/*.db
+data/*.sqlite
+*.db-journal
+
+# Temporary
+tmp/
+temp/
+*.tmp
+.cache/
+
+# Downloads
+downloads/*
+!downloads/.gitkeep
+
+# Misc
+*.log

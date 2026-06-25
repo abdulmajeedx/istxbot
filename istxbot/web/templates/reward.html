@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>istx.io - مكافأة النقاط</title>
+    <style>
+        :root { --accent: #fe2c55; --bg: #f9fafb; --card: #fff; --text: #1a1a2e; --text-muted: #888; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: var(--card); border-radius: 20px; padding: 32px 24px; text-align: center; max-width: 400px; width: 100%; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+        h1 { font-size: 22px; margin-bottom: 12px; }
+        p { color: var(--text-muted); font-size: 14px; line-height: 1.8; margin-bottom: 16px; }
+        .points-badge { display: inline-block; background: var(--accent); color: #fff; padding: 12px 32px; border-radius: 16px; font-size: 32px; font-weight: 800; margin: 12px 0; }
+        .btn { display: inline-block; padding: 14px 32px; background: var(--accent); color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; text-decoration: none; cursor: pointer; margin: 8px; }
+        .btn-outline { background: #fff; color: var(--accent); border: 2px solid var(--accent); }
+        .status-icon { font-size: 48px; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        {% if claimed %}
+        <div class="status-icon">🎉</div>
+        <h1>تم استلام المكافأة!</h1>
+        <div class="points-badge">+{{ points_earned }}</div>
+        <p>تم إضافة <strong>{{ points_earned }}</strong> نقاط إلى رصيدك</p>
+        <p style="font-size:12px;color:var(--text-muted)">عد إلى موقع التحميل وتابع ربح المزيد</p>
+        <a href="https://inspiredownloader.com/account/" class="btn">📊 تحقق من رصيدي</a>
+        {% else %}
+        <div class="status-icon">🔗</div>
+        <h1>استلم نقاطك</h1>
+        <p>أدخل بريدك الإلكتروني لاستلام نقاط المكافأة</p>
+        <input type="email" id="rewardEmail" placeholder="example@email.com" dir="ltr" style="width:100%;padding:13px;border:1.5px solid #e5e5e5;border-radius:12px;font-size:15px;margin-bottom:12px;text-align:center;">
+        <button onclick="claimReward()" class="btn">🎁 استلم المكافأة</button>
+        <p id="rewardMsg" style="font-size:13px;margin-top:8px;"></p>
+        {% endif %}
+    </div>
+
+    <script>
+    async function claimReward() {
+        var email = document.getElementById('rewardEmail').value.trim();
+        var msg = document.getElementById('rewardMsg');
+        if (!email || !email.includes('@')) { msg.textContent = 'الرجاء إدخال بريد صحيح'; msg.style.color = '#ff1744'; return; }
+        var token = '{{ token }}';
+        try {
+            var r = await fetch('/api/web/claim-reward', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email: email, token: token})
+            });
+            var d = await r.json();
+            if (d.success) {
+                msg.textContent = '✅ ' + d.message;
+                msg.style.color = '#00c853';
+                setTimeout(function(){ location.href = 'https://inspiredownloader.com/account/'; }, 2000);
+            } else {
+                msg.textContent = '❌ ' + (d.message || 'خطأ');
+                msg.style.color = '#ff1744';
+            }
+        } catch(e) {
+            msg.textContent = '❌ حدث خطأ';
+            msg.style.color = '#ff1744';
+        }
+    }
+    </script>
+</body>
+</html>

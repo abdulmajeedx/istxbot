@@ -1,0 +1,27 @@
+{
+  "name": "TikTok Downloader",
+  "short_name": "TT Download",
+  "description": "حمل فيديوهات TikTok بدون علامة مائية بجودة عالية",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f0f0f",
+  "theme_color": "#fe2c55",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["entertainment", "utilities"],
+  "icons": [
+    {
+      "src": "/static/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

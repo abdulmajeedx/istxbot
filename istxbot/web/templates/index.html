@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>{{ site_settings.site_title }}</title>
+    <link rel="icon" type="image/png" href="/static/favicon.png?v=2">
+
+    <!-- PWA -->
+    <link rel="manifest" href="/static/manifest.json?v=2">
+
+    <meta name="theme-color" content="{{ site_settings.accent_color }}">
+    <meta name="description" content="{{ site_settings.site_subtitle }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="{{ site_settings.site_title[:12] }}">
+    <link rel="apple-touch-icon" href="/static/apple-touch-icon.png?v=2">
+    <meta name="mobile-web-app-capable" content="yes">
+    <style>
+        :root {
+            --bg: {{ site_settings.bg_color }};
+            --card: {{ site_settings.card_color }};
+            --accent: {{ site_settings.accent_color }};
+            --cyan: {{ site_settings.cyan_color }};
+            --accent-hover: #ef2950;
+            --text: #e0e0e0;
+            --text-muted: #888;
+            --input-bg: #16213e;
+            --border: #2a2a4a;
+            --success: #00c853;
+            --error: #ff1744;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo p {
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--input-bg);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 15px;
+            transition: all 0.2s;
+            outline: none;
+            direction: ltr;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(254, 44, 85, 0.15);
+        }
+
+        .form-group input::placeholder {
+            color: #555;
+        }
+
+        .key-indicator {
+            display: none;
+            font-size: 12px;
+            margin-top: 6px;
+            padding: 6px 10px;
+            border-radius: 8px;
+        }
+
+        .key-indicator.valid {
+            display: block;
+            background: rgba(0, 200, 83, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(0, 200, 83, 0.2);
+        }
+
+        .key-indicator.invalid {
+            display: block;
+            background: rgba(255, 23, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(255, 23, 68, 0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(254, 44, 85, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn.loading .spinner {
+            display: block;
+        }
+
+        .btn.loading .btn-text {
+            display: none;
+        }
+
+        .install-banner {
+            display: none;
+            background: linear-gradient(135deg, var(--card), var(--bg));
+            border: 1.5px solid var(--accent);
+            border-radius: 14px;
+            margin-bottom: 16px;
+            padding: 14px 16px;
+            animation: slideDown 0.4s ease-out;
+        }
+        .install-banner.show { display: block; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .install-banner-inner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .install-icon {
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .install-text {
+            flex: 1;
+            min-width: 0;
+        }
+        .install-text strong {
+            display: block;
+            font-size: 14px;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+        .install-text span {
+            font-size: 12px;
+            color: #aaa;
+            line-height: 1.4;
+        }
+
+        .install-btn {
+            flex-shrink: 0;
+            padding: 10px 20px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .install-btn:hover { background: var(--accent-hover); }
+
+        .install-close {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 20px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            border-radius: 6px;
+        }
+        .install-close:hover { color: #fff; }
+
+        .key-actions {
+            margin-top: 6px;
+            font-size: 12px;
+        }
+
+        .free-key-link {
+            color: #25f4ee;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .free-key-link:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        .free-key-link.used {
+            color: #666;
+            pointer-events: none;
+            cursor: default;
+        }
+
+        .free-key-loading {
+            display: none;
+            color: #888;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show { display: block; }
+        .alert.success { background: rgba(0,200,83,0.1); color: var(--success); border: 1px solid rgba(0,200,83,0.2); }
+        .alert.error { background: rgba(255,23,68,0.1); color: var(--error); border: 1px solid rgba(255,23,68,0.2); }
+        .alert.info { background: rgba(37,244,238,0.1); color: #25f4ee; border: 1px solid rgba(37,244,238,0.2); }
+
+        .footer {
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+            color: #555;
+            font-size: 11px;
+        }
+        .footer a { color: #666; text-decoration: none; }
+        .footer a:hover { color: #999; }
+
+        .usage-info {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .ad-banner {
+            margin: 16px 0;
+            text-align: center;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ad-banner:empty { display: none; }
+
+        .ad-native {
+            margin: 16px 0;
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.02);
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+        }
+        .ad-native:empty { display: none; }
+
+        .ad-sticky {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+            padding: 8px;
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ad-sticky:empty { display: none; }
+        body.has-sticky-ad { padding-bottom: 76px; }
+
+        .steps {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .steps-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
+        .step-num {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            color: #fff;
+            font-size: 13px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .step-text {
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 480px) {
+            .card { padding: 20px; }
+            .logo h1 { font-size: 24px; }
+        }
+    </style>
+</head>
+{% if ads_settings.top_html %}
+<div class="ad-banner" style="margin:0 0 16px;">{{ ads_settings.top_html | safe }}</div>
+{% endif %}
+
+<body class="{% if ads_settings.sticky_bottom_html %}has-sticky-ad{% endif %}">
+    <div class="container">
+        <div class="card">
+            <div class="logo">
+                <div style="width:56px;height:56px;margin:0 auto 14px;border-radius:16px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(135deg, {{ site_settings.accent_color }}, {{ site_settings.cyan_color }});">
+                    <img src="{% if platform == 'TikTok' %}/static/tiktok_icon.png{% else %}/static/snapchat_icon.png{% endif %}" style="width:80%;height:80%;object-fit:contain;" alt="logo">
+                </div>
+                <h1>{{ site_settings.site_title }}</h1>
+                <p>{{ site_settings.site_subtitle }}</p>
+            </div>
+            {% if ads_settings.top_html %}
+            <div class="ad-banner">{{ ads_settings.top_html | safe }}</div>
+            {% endif %}
+
+            <div id="alert" class="alert"></div>
+
+            <form id="downloadForm">
+                <div class="form-group">
+                    <label>رابط الفيديو</label>
+                    <input
+                        type="text"
+                        id="url"
+                        placeholder="{{ site_settings.url_placeholder }}"
+                        autocomplete="off"
+                        dir="ltr"
+                    >
+                </div>
+
+                {% if ads_settings.native_html %}
+                <div class="ad-native">{{ ads_settings.native_html | safe }}</div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label>مفتاح التفعيل</label>
+                    <div class="input-wrapper">
+                        <input
+                            type="text"
+                            id="key"
+                            placeholder="ادخل مفتاح التفعيل الخاص بك"
+                            autocomplete="off"
+                        >
+                    </div>
+                    <div class="key-actions">
+                        <a href="#" id="freeKeyLink" class="free-key-link">
+                            🔑 للحصول على مفتاح مجاني اضغط هنا
+                        </a>
+                        <span id="freeKeyLoading" class="free-key-loading">⏳ جاري إنشاء المفتاح...</span>
+                    </div>
+                    <div id="keyIndicator" class="key-indicator"></div>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">
+                    <span class="btn-text">تحميل</span>
+                    <span class="spinner"></span>
+                </button>
+            </form>
+
+            {% if ads_settings.middle_html %}
+            <div class="ad-banner">{{ ads_settings.middle_html | safe }}</div>
+            {% endif %}
+
+            <div class="steps">
+                <div class="steps-title">طريقة الاستخدام</div>
+                <div class="steps-list">
+                    <div class="step">
+                        <div class="step-num">1</div>
+                        <div class="step-text">انسخ رابط الفيديو من {{ platform }} والصقه في الحقل الأول</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">2</div>
+                        <div class="step-text">احصل على مفتاح التفعيل المجاني بالضغط على الرابط أسفل حقل المفتاح</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">3</div>
+                        <div class="step-text">اضغط تحميل وانتظر ثوانٍ حتى يبدأ التحميل تلقائياً</div>
+                    </div>
+                </div>
+            </div>
+
+            {% if ads_settings.after_steps_html %}
+            <div class="ad-banner" style="margin-top:20px;">{{ ads_settings.after_steps_html | safe }}</div>
+            {% endif %}
+
+            <div class="usage-info">
+                {{ site_settings.usage_text }}
+            </div>
+        </div>
+
+        {% if ads_settings.bottom_html %}
+        <div class="ad-banner">{{ ads_settings.bottom_html | safe }}</div>
+        {% endif %}
+
+        <div class="footer">
+            <a href="/help">شرح الاستخدام</a> ·
+            <a href="/account">حسابي</a> ·
+            <a href="/contact">تواصل معنا</a>
+            <br><span style="color:#444;font-size:11px;margin-top:6px;display:block">{{ site_settings.footer_text }}</span>
+        </div>
+
+        <div id="installBanner" class="install-banner">
+            <div class="install-banner-inner">
+                <div class="install-icon" style="background: linear-gradient(135deg, {{ site_settings.accent_color }}, {{ site_settings.cyan_color }});">
+                    <img src="{% if platform == 'TikTok' %}/static/tiktok_icon.png{% else %}/static/snapchat_icon.png{% endif %}" style="width: 80%; height: 80%; object-fit: contain;" alt="logo">
+                </div>
+                <div class="install-text">
+                    <strong>ثبّت التطبيق</strong>
+                    <span>أضف إلى الشاشة الرئيسية لسهولة الوصول</span>
+                </div>
+                <button class="install-btn" id="installBtn">تثبيت</button>
+                <button class="install-close" id="installClose">&times;</button>
+            </div>
+        </div>
+
+        <div id="iosBanner" class="install-banner">
+            <div class="install-banner-inner">
+                <div class="install-icon" style="background: linear-gradient(135deg, {{ site_settings.accent_color }}, {{ site_settings.cyan_color }});">
+                    <img src="{% if platform == 'TikTok' %}/static/tiktok_icon.png{% else %}/static/snapchat_icon.png{% endif %}" style="width: 80%; height: 80%; object-fit: contain;" alt="logo">
+                </div>
+                <div class="install-text">
+                    <strong>ثبّت التطبيق</strong>
+                    <span>اضغط <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="display:inline;vertical-align:-2px"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H7l5-6 5 6h-4v4h-2z"/></svg> ثم «إضافة إلى الشاشة الرئيسية»</span>
+                </div>
+                <button class="install-close" id="iosClose">&times;</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PLATFORM = "{{ platform }}";
+        const form = document.getElementById('downloadForm');
+        const urlInput = document.getElementById('url');
+        const keyInput = document.getElementById('key');
+        const submitBtn = document.getElementById('submitBtn');
+        const alertEl = document.getElementById('alert');
+        const keyIndicator = document.getElementById('keyIndicator');
+        const freeKeyLink = document.getElementById('freeKeyLink');
+        const freeKeyLoading = document.getElementById('freeKeyLoading');
+
+        let keyCheckTimeout = null;
+
+        // Show alert message
+        function showAlert(message, type) {
+            alertEl.textContent = message;
+            alertEl.className = 'alert show ' + type;
+            if (type !== 'error') {
+                setTimeout(() => { alertEl.className = 'alert'; }, 5000);
+            }
+        }
+
+        // Validate key in real-time with debounce
+        keyInput.addEventListener('input', function() {
+            const key = keyInput.value.trim();
+            keyIndicator.className = 'key-indicator';
+            keyIndicator.textContent = '';
+
+            if (keyCheckTimeout) clearTimeout(keyCheckTimeout);
+            if (key.length < 4) return;
+
+            keyCheckTimeout = setTimeout(async () => {
+                try {
+                    const res = await fetch('/api/validate-key', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ key: key })
+                    });
+                    const data = await res.json();
+
+                    if (data.valid) {
+                        keyIndicator.className = 'key-indicator valid';
+                        keyIndicator.textContent = '✅ مفتاح صالح - ' + data.usage_left + ' تحميل متبقي';
+                    } else {
+                        keyIndicator.className = 'key-indicator invalid';
+                        keyIndicator.textContent = '❌ ' + data.message;
+                    }
+                } catch (e) {
+                    // ignore network errors during typing
+                }
+            }, 600);
+        });
+
+        // Free key generation
+        freeKeyLink.addEventListener('click', async function(e) {
+            e.preventDefault();
+            freeKeyLink.style.display = 'none';
+            freeKeyLoading.style.display = 'inline';
+
+            try {
+                const res = await fetch('/api/free-key', { method: 'POST' });
+                const data = await res.json();
+
+                if (data.success) {
+                    keyInput.value = data.key;
+                    keyIndicator.className = 'key-indicator valid';
+                    keyIndicator.textContent = '✅ مفتاح مجاني — ' + data.usage_left + ' تحميلات متبقية اليوم';
+                    freeKeyLink.classList.add('used');
+                    freeKeyLink.textContent = '🔒 تم الحصول على مفتاح مجاني (5 تحميلات / يوم)';
+                } else {
+                    keyIndicator.className = 'key-indicator invalid';
+                    keyIndicator.textContent = '❌ ' + data.message;
+                    freeKeyLink.style.display = 'inline';
+                }
+            } catch (err) {
+                keyIndicator.className = 'key-indicator invalid';
+                keyIndicator.textContent = '❌ حدث خطأ. حاول مرة أخرى.';
+                freeKeyLink.style.display = 'inline';
+            } finally {
+                freeKeyLoading.style.display = 'none';
+            }
+        });
+
+        // Handle form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const url = urlInput.value.trim();
+            const key = keyInput.value.trim();
+
+            alertEl.className = 'alert';
+
+            if (!url) {
+                showAlert('الرجاء إدخال رابط ' + PLATFORM, 'error');
+                return;
+            }
+            if (!key) {
+                showAlert('الرجاء إدخال مفتاح التفعيل', 'error');
+                return;
+            }
+
+            if (PLATFORM === 'TikTok' && !url.includes('tiktok.com')) {
+                showAlert('الرجاء إدخال رابط TikTok صحيح', 'error');
+                return;
+            }
+            if (PLATFORM === 'Snapchat' && !url.includes('snapchat.com') && !url.includes('snap.com')) {
+                showAlert('الرجاء إدخال رابط Snapchat صحيح', 'error');
+                return;
+            }
+
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            showAlert('⏳ جاري التحميل... قد يستغرق بضع ثوانٍ', 'info');
+
+            try {
+                const res = await fetch('/api/download', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url, key })
+                });
+
+                if (!res.ok) {
+                    const data = await res.json();
+                    showAlert(data.error || 'حدث خطأ أثناء التحميل', 'error');
+                } else {
+                    // File download success — trigger browser download
+                    const blob = await res.blob();
+                    const contentDisposition = res.headers.get('Content-Disposition');
+                    let filename = PLATFORM.toLowerCase() + '_video.mp4';
+                    if (contentDisposition) {
+                        const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                        if (match && match[1]) {
+                            filename = match[1].replace(/['"]/g, '');
+                        }
+                    }
+
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(downloadUrl);
+
+                    showAlert('✅ تم التحميل بنجاح!', 'success');
+
+                    // Re-check key usage
+                    if (keyInput.value.trim()) {
+                        keyInput.dispatchEvent(new Event('input'));
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                showAlert('حدث خطأ في الاتصال. حاول مرة أخرى.', 'error');
+            } finally {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            }
+        });
+
+        // ─── PWA Install Logic ───
+        const installBanner = document.getElementById('installBanner');
+        const iosBanner = document.getElementById('iosBanner');
+        const installBtn = document.getElementById('installBtn');
+        const installClose = document.getElementById('installClose');
+        const iosClose = document.getElementById('iosClose');
+
+        let deferredPrompt = null;
+
+        // Detect iOS
+        const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                console.log('SW registered:', reg.scope);
+            }).catch(function(err) {
+                console.log('SW failed:', err);
+            });
+        }
+
+        // Android: capture beforeinstallprompt
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (!isStandalone) {
+                installBanner.classList.add('show');
+            }
+        });
+
+        // Android: install button click
+        if (installBtn) {
+            installBtn.addEventListener('click', async function() {
+                if (!deferredPrompt) return;
+                deferredPrompt.prompt();
+                const result = await deferredPrompt.userChoice;
+                console.log('Install result:', result.outcome);
+                deferredPrompt = null;
+                installBanner.classList.remove('show');
+            });
+        }
+
+        // Close banner
+        if (installClose) {
+            installClose.addEventListener('click', function() {
+                installBanner.classList.remove('show');
+            });
+        }
+
+        // iOS: show banner after delay
+        if (isIOS && !isStandalone) {
+            setTimeout(function() {
+                iosBanner.classList.add('show');
+            }, 2000);
+        }
+
+        if (iosClose) {
+            iosClose.addEventListener('click', function() {
+                iosBanner.classList.remove('show');
+            });
+        }
+
+        // Hide banners if already installed
+        if (isStandalone) {
+            if (installBanner) installBanner.classList.remove('show');
+            if (iosBanner) iosBanner.classList.remove('show');
+        }
+
+    </script>
+
+    {% if ads_settings.sticky_bottom_html %}
+    <div class="ad-sticky">{{ ads_settings.sticky_bottom_html | safe }}</div>
+    {% endif %}
+</body>
+</html>

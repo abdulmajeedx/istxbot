@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TikTokForBot</string>
+    <string name="login_title">تسجيل الدخول</string>
+    <string name="login_subtitle">لوحة تحكم بوت التحميل</string>
+    <string name="username_hint">اسم المستخدم</string>
+    <string name="password_hint">كلمة المرور</string>
+    <string name="login_button">تسجيل الدخول</string>
+    <string name="verify_button">تأكيد</string>
+    <string name="dashboard_title">لوحة التحكم</string>
+    <string name="settings_title">الإعدادات</string>
+    <string name="users_title">المستخدمين</string>
+    <string name="bot_status">حالة البوت</string>
+    <string name="bot_on">🟢 شغال</string>
+    <string name="bot_off">🔴 متوقف</string>
+    <string name="total_users">المستخدمين</string>
+    <string name="total_downloads">التحميلات</string>
+    <string name="today_usage">استخدام اليوم</string>
+    <string name="total_visitors">الزوار</string>
+    <string name="total_points">النقاط</string>
+    <string name="search_hint">ابحث عن مستخدم...</string>
+    <string name="broadcast_title">إرسال بث</string>
+    <string name="broadcast_hint">اكتب رسالتك هنا...</string>
+    <string name="save_settings">حفظ الإعدادات</string>
+    <string name="logout">تسجيل الخروج</string>
+    <string name="verification_code_hint">رمز التحقق</string>
+    <string name="verification_code_desc">أدخل الرقم المرسل إلى تلغرام</string>
+</resources>
