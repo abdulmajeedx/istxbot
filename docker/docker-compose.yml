@@ -68,8 +68,8 @@ services:
       - .env
     environment:
       - SERVICE=web-control
-      - WEB_HOST=0.0.0.0
-      - WEB_PORT=8082
+      - WEB_CONTROL_HOST=0.0.0.0
+      - WEB_CONTROL_PORT=8082
       - DB_PATH=/app/data/bot_data.db
     volumes:
       - ../istxbot:/app/istxbot:ro
@@ -98,6 +98,7 @@ services:
       sh -c "cd /app/dev-bot && python3 dev_bot.py"
     networks:
       - internal
+    # لا health check — بوت polling بدون HTTP
 
   # ═══ لوحة المراقبة ═══
   monitor:
@@ -110,6 +111,8 @@ services:
       - .env
     environment:
       - SERVICE=monitor
+      - MONITOR_HOST=0.0.0.0
+      - MONITOR_PORT=8090
     volumes:
       - ../monitor:/app/monitor:ro
       - bot_data:/app/data

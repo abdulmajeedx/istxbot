@@ -117,7 +117,10 @@ def dashboard():
     return render_template_string(HTML, cards=cards, log_lines=log_lines, now=datetime.now().strftime("%H:%M:%S"))
 
 if __name__ == "__main__":
-    print("📊 لوحة المراقبة: http://127.0.0.1:8090")
-    app.run(host="127.0.0.1", port=8090, debug=False)
+    import os as _os
+    _host = _os.getenv("MONITOR_HOST", "127.0.0.1")
+    _port = int(_os.getenv("MONITOR_PORT", "8090"))
+    print(f"📊 لوحة المراقبة: http://{_host}:{_port}")
+    app.run(host=_host, port=_port, debug=False)
 
 
