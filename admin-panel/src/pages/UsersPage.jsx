@@ -5,9 +5,11 @@ import ConfirmDialog from '../components/ConfirmDialog';
 import UserFilters from '../components/UserFilters';
 import UserTable from '../components/UserTable';
 import UserDetailPanel from '../components/UserDetailPanel';
+import GhostModeToggle from '../components/GhostModeToggle';
+import GhostActionHistory from '../components/GhostActionHistory';
 import EmptyState from '../components/EmptyState';
 import {
-  Users as UsersIcon, Download, Activity, Ban, AlertTriangle, X,
+
 } from 'lucide-react';
 
 export default function UsersPage() {
@@ -38,6 +40,18 @@ export default function UsersPage() {
   const [sendingMsg, setSendingMsg] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
   const [banReason, setBanReason] = useState('');
+
+  // ── Ghost Mode (وضع الشبح) - محفوظ في localStorage للبقاء بعد التحديث ──
+  const [ghostMode, setGhostMode] = useState(() => {
+    return localStorage.getItem('ghostMode') === 'true';
+  });
+  const [showGhostHistory, setShowGhostHistory] = useState(false);
+
+  // حفظ حالة ghostMode في localStorage عند تغيرها
+  const handleGhostToggle = (enabled) => {
+    setGhostMode(enabled);
+    localStorage.setItem('ghostMode', enabled ? 'true' : 'false');
+  };
 
   const [debouncedQuery, setDebouncedQuery] = useState('');
   useEffect(() => {
@@ -129,10 +143,28 @@ export default function UsersPage() {
       const currentTier = usersList.find((u) => u.user_id === userId)?.tier || 'free';
       const tierMap = { free: 'premium', premium: 'vip', vip: 'pro', pro: 'pro' };
       const newTier = tierMap[currentTier] || 'premium';
-      const { data } = await users.setTier(userId, newTier);
-      toast.success(data?.message || `تمت الترقية إلى ${newTier}`);
-      loadUsers();
-    } catch { toast.error('فشل ترقية المستخدم'); }
+
+      if (ghostMode) {
+        // في وضع الشبح: استخدام ghost API الصامت
+        const { admin } = await import('../api/client');
+        const { data } = await admin.ghostSetTier(userId, newTier);
+        toast.success(data?.message || `تمت الترقية إلى ${newTier} (وضع الشبح)`);
+      } else {
+        const { data } = await users.setTier(userId, newTier);
+        toast.success(data?.message || `تمت الترقية إلى ${newTier}`);
+      }
+    } catch (err) {
+      console.error('[GhostMode] فشل ترقية المستخدم:', err);
+      toast.error('فشل ترقية المستخدم');
+      return; // لا نكمل تحديث القائمة إذا فشل الحفظ
+    }
+
+    // تحديث قائمة المستخدمين في الخلفية - فشلها لا يعني فشل الحفظ
+    try {
+      await loadUsers();
+    } catch (e) {
+      console.warn('[GhostMode] فشل تحديث قائمة المستخدمين بعد الترقية:', e);
+    }
   };
 
   const [refreshing, setRefreshing] = useState(false);
@@ -201,6 +233,12 @@ export default function UsersPage() {
         </button>
       </UserFilters>
 
+      <GhostModeToggle
+        ghostMode={ghostMode}
+        onToggle={handleGhostToggle}
+        onShowHistory={() => setShowGhostHistory(true)}
+      />
+
       <UserTable
         users={sortedUsers}
         loading={loading}
@@ -215,6 +253,7 @@ export default function UsersPage() {
         sortField={sortField} sortDir={sortDir} onSort={handleSort}
         page={page} totalPages={totalPages} total={total ?? usersList.length}
         onPageChange={setPage}
+        ghostMode={ghostMode}
       />
 
       {msgTarget && (
@@ -276,7 +315,22 @@ export default function UsersPage() {
         />
       )}
 
-      {detailUser && <UserDetailPanel user={detailUser} onClose={() => setDetailUser(null)} onRefresh={loadUsers} />}
+      {detailUser && (
+        <UserDetailPanel
+          user={detailUser}
+          onClose={() => setDetailUser(null)}
+          onRefresh={loadUsers}
+          ghostMode={ghostMode}
+        />
+      )}
+
+      {showGhostHistory && (
+        <GhostActionHistory
+          open={showGhostHistory}
+          onClose={() => setShowGhostHistory(false)}
+        />
+      )}
     </div>
   );
 }
+

@@ -44,8 +44,7 @@ function StatMini({ icon: Icon, label, value, color }) {
 export default function AnalyticsPage() {
   const { toast } = useToast();
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [dateRange, setDateRange] = useState('7d');
+
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -237,3 +236,5 @@ export default function AnalyticsPage() {
     </div>
   );
 }
+
+

@@ -23,8 +23,8 @@ export default function useIdleTimeout({
   onLogout,
   enabled = true,
 } = {}) {
-  const [timeUntilWarning, setTimeUntilWarning] = useState(warnAfter);
-  const [timeUntilLogout, setTimeUntilLogout] = useState(logoutAfter);
+
+
   const lastActivityRef = useRef(Date.now());
   const warnedRef = useRef(false);
   const intervalRef = useRef(null);
@@ -98,3 +98,5 @@ export function formatTimeRemaining(ms) {
   if (minutes > 0) return `${minutes} دقيقة و ${seconds} ثانية`;
   return `${seconds} ثانية`;
 }
+
+

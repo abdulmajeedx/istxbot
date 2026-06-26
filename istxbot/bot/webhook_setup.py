@@ -45,7 +45,7 @@ except ImportError:
 
 PRIORITY_QUEUE_ENABLED = False
 try:
-    from bot.utils.priority_queue import init_queue_manager as iqm, get_queue_manager as gqm
+
     PRIORITY_QUEUE_ENABLED = True
 except ImportError:
     iqm = None
@@ -286,3 +286,4 @@ def shutdown_bot():
 
     _initialized = False
     logger.info("Bot shut down")
+

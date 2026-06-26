@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Search, LayoutDashboard, Users, BarChart3, Settings,
   ScrollText, Radio, Database, Server, Play, Square, RotateCw,
-  Download, ArrowRight, Zap,
+
 } from 'lucide-react';
 
 // Actions + pages that can be searched/navigated to
@@ -176,3 +176,4 @@ export default function CommandPalette() {
     </div>
   );
 }
+

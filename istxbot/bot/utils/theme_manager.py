@@ -5,7 +5,7 @@ Theme Manager for Dashboard
 
 import json
 import os
-from pathlib import Path
+
 from typing import Dict, Any, Optional
 
 
@@ -181,3 +181,4 @@ def get_theme_manager() -> ThemeManager:
     if _global_theme_manager is None:
         _global_theme_manager = ThemeManager()
     return _global_theme_manager
+

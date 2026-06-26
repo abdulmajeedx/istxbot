@@ -6,12 +6,12 @@
 
 import os
 import sys
-import json
+
 import subprocess
-import asyncio
+
 from pathlib import Path
 from datetime import datetime
-from typing import Optional
+
 
 import requests
 from telegram import Update
@@ -396,3 +396,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+

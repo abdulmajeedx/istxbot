@@ -167,6 +167,14 @@ export const admin = {
     get: () => client.get('/admin/settings'),
     update: (data) => client.post('/admin/settings', data),
   },
+
+  // ── Ghost Mode (وضع الشبح) ──
+  /** تغيير مستوى مستخدم بصمت - بدون أي إشعار */
+  ghostSetTier: (userId, tier, expiresIn) =>
+    client.post('/admin/ghost-set-tier', { user_id: userId, tier, expires_in: expiresIn }),
+  /** جلب سجل عمليات الشبح */
+  ghostGetHistory: (params = {}) =>
+    client.post('/admin/ghost-get-history', params),
 };
 
 // ── Database ──

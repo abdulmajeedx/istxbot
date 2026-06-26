@@ -24,14 +24,14 @@ from bot.downloaders.spotify_downloader import SpotifyDownloader
 # Try to import improved TikTok downloader
 ImprovedTikTokDownloader = None
 try:
-    from bot.downloaders.tiktok_improved_downloader import ImprovedTikTokDownloader
+
     IMPROVED_TIKTOK_ENABLED = True
 except ImportError:
     IMPROVED_TIKTOK_ENABLED = False
 
 TikTokAPIDownloader = None
 try:
-    from bot.downloaders.tiktok_api_downloader import TikTokAPIDownloader
+
     TIKTOK_API_DOWNLOADER = True
 except ImportError:
     TIKTOK_API_DOWNLOADER = False
@@ -507,7 +507,7 @@ async def _download_and_send(
     queue_manager = None
 ):
     if queue_manager:
-        from bot.utils.priority_queue import UserTier
+
         user_tier = queue_manager.get_user_tier(user_id)
         
         if user_id not in queue_manager.user_daily_downloads:
@@ -732,3 +732,5 @@ async def _send_files(
         await status_message.edit_text("❌ فشل إرسال جميع الملفات")
     
     await cleanup_downloads()
+
+

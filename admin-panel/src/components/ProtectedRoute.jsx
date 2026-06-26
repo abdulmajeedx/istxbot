@@ -2,7 +2,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getStoredToken } from '../api/client';
 import { SkeletonPulse } from './Skeleton';
-import { Shield, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 export default function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -45,3 +45,4 @@ export default function ProtectedRoute({ children }) {
 
   return children;
 }
+

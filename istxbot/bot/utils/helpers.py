@@ -4,7 +4,7 @@ import re
 import time
 from pathlib import Path
 from typing import Optional, Dict
-from functools import lru_cache
+
 
 PLATFORM_PATTERNS = {
     'YouTube': [
@@ -156,3 +156,4 @@ def format_bytes(size_bytes):
         size_bytes /= 1024.0
         i += 1
     return f"{size_bytes:.1f}{size_name[i]}"
+

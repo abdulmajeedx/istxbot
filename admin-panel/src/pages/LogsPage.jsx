@@ -20,12 +20,12 @@ const levelColors = {
 export default function LogsPage() {
   const { toast } = useToast();
   const [logs, setLogs] = useState([]);
-  const [loading, setLoading] = useState(true);
+
   const [filter, setFilter] = useState('all');
   const [count, setCount] = useState(50);
   const [search, setSearch] = useState('');
   const [autoRefresh, setAutoRefresh] = useState(false);
-  const [showClearConfirm, setShowClearConfirm] = useState(false);
+
   const intervalRef = useRef(null);
 
   const loadLogs = useCallback(async () => {
@@ -174,3 +174,5 @@ export default function LogsPage() {
     </div>
   );
 }
+
+

@@ -17,7 +17,7 @@ export default function SettingsPage() {
   const [generalSettings, setGeneralSettings] = useState({});
   const [platformList, setPlatformList] = useState({});
   const [tierLimits, setTierLimits] = useState({});
-  const [loading, setLoading] = useState(true);
+
   const [saving, setSaving] = useState(false);
   const [adminPwd, setAdminPwd] = useState('');
   const [pwdConfirm, setPwdConfirm] = useState('');
@@ -271,3 +271,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+

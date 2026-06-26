@@ -57,7 +57,7 @@ export function ToastProvider({ children }) {
 }
 
 function ToastItem({ id, message, type, duration, onRemove }) {
-  const [exiting, setExiting] = useState(false);
+
   const Icon = ICONS[type] || ICONS.info;
 
   useEffect(() => {
@@ -98,3 +98,4 @@ export function useToast() {
 }
 
 export default ToastContext;
+

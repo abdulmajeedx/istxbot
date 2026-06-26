@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from 'react';
  *   </PageTransition>
  */
 export default function PageTransition({ children, triggerKey, className = '' }) {
-  const [visible, setVisible] = useState(false);
+
   const prevKey = useRef(triggerKey);
 
   useEffect(() => {
@@ -34,3 +34,4 @@ export default function PageTransition({ children, triggerKey, className = '' })
     </div>
   );
 }
+

@@ -30,7 +30,7 @@ const SHORTCUT_GROUPS = [
 ];
 
 export default function ShortcutsOverlay() {
-  const [open, setOpen] = useState(false);
+
 
   useEffect(() => {
     const handler = (e) => {
@@ -124,3 +124,4 @@ export default function ShortcutsOverlay() {
     </div>
   );
 }
+

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { admin } from '../api/client';
 import { useToast } from '../components/Toast';
-import { Shield, Users, Download, ArrowUpDown, Save, RotateCcw, Crown, Star, Zap, Ban } from 'lucide-react';
+import { Shield, Download, ArrowUpDown, Save, Crown, Star, Zap } from 'lucide-react';
 
 const TIER_META = {
   vip:     { label: 'VIP',      color: 'from-purple-500 to-pink-600',      icon: Crown, bg: 'bg-purple-500/10', border: 'border-purple-500/20', text: 'text-purple-400' },
@@ -12,9 +12,9 @@ const TIER_META = {
 export default function TiersPage() {
   const { toast } = useToast();
   const [tiers, setTiers] = useState([]);
-  const [loading, setLoading] = useState(true);
+
   const [saving, setSaving] = useState(false);
-  const [dirty, setDirty] = useState(false);
+
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -142,3 +142,5 @@ export default function TiersPage() {
     </div>
   );
 }
+
+

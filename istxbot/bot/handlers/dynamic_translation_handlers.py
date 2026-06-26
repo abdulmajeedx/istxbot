@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 try:
-    from bot.utils.dynamic_translator import (
+
         auto_translate,
         translate,
         detect_language,
@@ -313,3 +313,5 @@ async def stop_translation_callback(callback: types.CallbackQuery, state: FSMCon
     await state.clear()
     await callback.message.edit_text("🚪 *تم إيقاف جلسة الترجمة الديناميكية*\n\n✨ شكراً لاستخدام خدمة الترجمة!\n\n📖 *للعودة:* `/translate`", parse_mode="Markdown")
     await callback.answer()
+
+

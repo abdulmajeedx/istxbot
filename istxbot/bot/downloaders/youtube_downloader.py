@@ -4,7 +4,7 @@ YouTube Video/Audio Downloader — uses yt-dlp.
 
 import os
 import asyncio
-from pathlib import Path
+
 from typing import Optional, Tuple, List
 
 import yt_dlp
@@ -151,3 +151,4 @@ class YtDlpDownloader(BaseDownloader):
             if key in error_lower:
                 return msg
         return "❌ فشل التحميل من YouTube. تأكد من صحة الرابط."
+

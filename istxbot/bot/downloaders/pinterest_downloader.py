@@ -5,7 +5,7 @@ import time
 import re
 import os
 from pathlib import Path
-from typing import Optional, Tuple, List, Dict
+
 import requests
 from config.settings import settings
 
@@ -390,3 +390,4 @@ class PinterestDownloader:
             return "❌ هذا المحتوى خاص أو غير موجود."
         
         return "عذراً، لا يمكن تحميل من Pinterest حالياً.\n\n📌 الحلول البديلة:\n1. استخدم موقع pinterest-downloader.com\n2. أو احفظ المحتوى يدوياً من تطبيق Pinterest\n\n💡 نعمل على حل هذه المشكلة قريباً"
+

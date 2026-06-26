@@ -1,9 +1,9 @@
 import asyncio
-import subprocess
+
 import logging
 import re
 import shutil
-from pathlib import Path
+
 from typing import Optional, Tuple
 from config.settings import settings
 
@@ -146,3 +146,5 @@ class SpotifyDownloader:
             return "❌ spotdl غير مثبت. تحقق من التثبيت."
         
         return "❌ فشل التحميل. حاول مرة أخرى."
+
+

@@ -7,13 +7,13 @@ import { HardDrive, Download, Terminal, Database, Loader2, Clock } from 'lucide-
 export default function DatabasePage() {
   const { toast } = useToast();
   const [dbInfo, setDbInfo] = useState(null);
-  const [loading, setLoading] = useState(true);
+
   const [backingUp, setBackingUp] = useState(false);
   const [queryMode, setQueryMode] = useState(false);
   const [sqlQuery, setSqlQuery] = useState('');
   const [queryResult, setQueryResult] = useState(null);
   const [queryRunning, setQueryRunning] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
 
   const loadInfo = useCallback(async () => {
     setLoading(true);
@@ -209,3 +209,5 @@ export default function DatabasePage() {
     </div>
   );
 }
+
+

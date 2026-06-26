@@ -1,12 +1,12 @@
 import { useState, useMemo } from 'react';
 import {
   ChevronUp, ChevronDown, ChevronsUpDown, MessageSquare,
-  Ban, Crown, Trash2, Copy, CheckCheck, Clock,
+
 } from 'lucide-react';
 import CopyToClipboard from './CopyToClipboard';
 import EmptyState from './EmptyState';
 import TierBadge from './TierBadge';
-import { Users as UsersIcon } from 'lucide-react';
+
 
 // ── دوال مساعدة لعرض اسم المستخدم بنسق تليجرام ──────────────────
 
@@ -77,6 +77,7 @@ export default function UserTable({
   totalPages,
   total,
   onPageChange,
+  ghostMode = false,
 }) {
   const allSelected = users.length > 0 && selectedIds.length === users.length;
   const someSelected = selectedIds.length > 0 && !allSelected;
@@ -245,10 +246,14 @@ export default function UserTable({
                       </button>
                       <button
                         onClick={() => onPromote(u.user_id)}
-                        className="p-2 rounded-lg hover:bg-amber-500/10 text-slate-400 hover:text-amber-400 transition-colors"
-                        title="ترقية"
+                        className={`p-2 rounded-lg transition-colors ${
+                          ghostMode
+                            ? 'hover:bg-indigo-500/10 text-slate-400 hover:text-indigo-400'
+                            : 'hover:bg-amber-500/10 text-slate-400 hover:text-amber-400'
+                        }`}
+                        title={ghostMode ? 'تغيير المستوى - وضع الشبح' : 'ترقية'}
                       >
-                        <Crown className="w-4 h-4" />
+                        {ghostMode ? <Ghost className="w-4 h-4" /> : <Crown className="w-4 h-4" />}
                       </button>
                       <button
                         onClick={() => onDelete(u)}
@@ -292,3 +297,5 @@ export default function UserTable({
     </div>
   );
 }
+
+

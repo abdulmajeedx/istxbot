@@ -7,7 +7,7 @@ import useIdleTimeout, { formatTimeRemaining } from '../hooks/useIdleTimeout';
 import {
   LayoutDashboard, Users, Settings, ScrollText,
   BarChart3, LogOut, Zap, Radio, Database, Server,
-  ChevronRight, Menu, X, ChevronLeft, AlertTriangle, Clock, Shield,
+
 } from 'lucide-react';
 
 const mainNavItems = [
@@ -31,7 +31,7 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+
   const [idleWarning, setIdleWarning] = useState(false);
 
   // ── Idle Timeout ──
@@ -247,3 +247,5 @@ export default function DashboardLayout() {
     </div>
   );
 }
+
+

@@ -4,8 +4,8 @@ import logging
 import os
 import re
 from pathlib import Path
-from typing import Optional, Tuple, List, Dict
-from urllib.parse import urlparse, parse_qs
+
+
 import requests
 
 logger = logging.getLogger(__name__)
@@ -410,3 +410,5 @@ class TikTokDownloader:
         except Exception as e:
             logger.error(f"Error getting media info: {e}")
             return None
+
+

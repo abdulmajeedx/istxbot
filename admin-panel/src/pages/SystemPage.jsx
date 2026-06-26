@@ -12,7 +12,7 @@ export default function SystemPage() {
   const [sysInfo, setSysInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [restarting, setRestarting] = useState(false);
-  const [showRestartConfirm, setShowRestartConfirm] = useState(false);
+
 
   const loadInfo = useCallback(async () => {
     setLoading(true);
@@ -257,3 +257,4 @@ export default function SystemPage() {
     </div>
   );
 }
+

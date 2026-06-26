@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
 from datetime import datetime, timedelta
-import asyncio
+
 
 TRANSLATION_ENABLED = False
 GT = None
@@ -226,3 +226,4 @@ def detect_language(text: str) -> str:
     """وظيفة مساعدة لكشف اللغة"""
     manager = get_translation_manager()
     return manager.detect_language(text)
+

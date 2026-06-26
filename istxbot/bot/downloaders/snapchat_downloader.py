@@ -3,11 +3,9 @@ import asyncio
 import logging
 import os
 import re
-import json
+
 from pathlib import Path
-from typing import Optional, Tuple, List
-from urllib.parse import urlparse, parse_qs
-from datetime import datetime
+
 
 logger = logging.getLogger(__name__)
 
@@ -319,3 +317,5 @@ class SnapchatDownloader:
         except Exception as e:
             logger.error(f"Error getting media info: {e}")
             return None
+
+

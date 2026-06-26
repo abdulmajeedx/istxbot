@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Ban, Trash2, Crown, Download, X } from 'lucide-react';
+import { Ban, Trash2, Crown, Download, X, Ghost } from 'lucide-react';
 
 export default function UserBulkActions({
   selectedIds,
@@ -8,6 +8,7 @@ export default function UserBulkActions({
   onBulkDelete,
   onBulkSetTier,
   onExport,
+  ghostMode = false,
 }) {
   const [showTierMenu, setShowTierMenu] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -51,9 +52,14 @@ export default function UserBulkActions({
         <button
           onClick={() => setShowTierMenu(!showTierMenu)}
           disabled={busy}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 disabled:opacity-50 transition-colors"
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium disabled:opacity-50 transition-colors ${
+            ghostMode
+              ? 'bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20'
+              : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20'
+          }`}
         >
-          <Crown className="w-3.5 h-3.5" /> تغيير المستوى
+          {ghostMode ? <Ghost className="w-3.5 h-3.5" /> : <Crown className="w-3.5 h-3.5" />}
+          {ghostMode ? 'تغيير المستوى (شبح)' : 'تغيير المستوى'}
         </button>
         {showTierMenu && (
           <>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Zap, Eye, EyeOff, Shield, Loader2, KeyRound, MessageCircle } from 'lucide-react';
+import { Eye, EyeOff, Shield, Loader2, KeyRound, MessageCircle } from 'lucide-react';
 
 export default function LoginPage() {
   const [password, setPassword] = useState('');
@@ -220,3 +220,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

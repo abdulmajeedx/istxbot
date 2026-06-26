@@ -5,7 +5,7 @@ import random
 from pathlib import Path
 from typing import Optional, List, Tuple, Dict, Any
 from config.settings import settings
-from bot.utils.helpers import sanitize_filename, download_with_retry
+
 
 logger = logging.getLogger(__name__)
 
@@ -237,3 +237,4 @@ class InstagramDownloader:
         
         logger.error(f"Instagram download failed: {error[:100]}")
         return "فشل التحميل. حاول مرة أخرى."
+

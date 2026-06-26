@@ -46,7 +46,7 @@ export default function DashboardPage() {
   const [botStatus, setBotStatus] = useState(null);
   const [botStats, setBotStats] = useState(null);
   const [sysInfo, setSysInfo] = useState(null);
-  const [loading, setLoading] = useState(true);
+
   const [actionLoading, setActionLoading] = useState(false);
 
   const loadData = useCallback(async () => {
@@ -226,3 +226,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

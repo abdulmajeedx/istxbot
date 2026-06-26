@@ -43,10 +43,13 @@ service-account.json
 local.properties
 *-cache.json
 
-# Data
+# Data / Databases
 data/*.db
 data/*.sqlite
+*.db
 *.db-journal
+*.db-wal
+*.db-shm
 
 # Temporary
 tmp/

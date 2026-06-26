@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
   X, Download, MapPin, Globe, Smartphone, Calendar, Clock, Activity,
-  Ban, Shield, MessageSquare, UserCog, Crown, Star, Zap, AlertTriangle,
-  ShieldOff, Save, RotateCcw, Clock as ClockIcon
+
+
 } from 'lucide-react';
 import { users, admin } from '../api/client';
 import { useToast } from './Toast';
@@ -24,19 +24,19 @@ const DURATION_OPTIONS = [
   { value: 'custom', label: '🗓️ تاريخ محدد' },
 ];
 
-export default function UserDetailPanel({ user, onClose, onRefresh }) {
+export default function UserDetailPanel({ user, onClose, onRefresh, ghostMode = false }) {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
-  const [loading, setLoading] = useState(true);
+
   const [detail, setDetail] = useState(null);
   const [acting, setActing] = useState(false);
   const [banReason, setBanReason] = useState('');
-  const [showBanInput, setShowBanInput] = useState(false);
+
   const [msgText, setMsgText] = useState('');
-  const [showMsgInput, setShowMsgInput] = useState(false);
+
 
   // Tier management
-  const [showTierEditor, setShowTierEditor] = useState(false);
+
   const [selectedTier, setSelectedTier] = useState('free');
   const [durationOption, setDurationOption] = useState(null);
   const [customDate, setCustomDate] = useState('');
@@ -103,15 +103,35 @@ export default function UserDetailPanel({ user, onClose, onRefresh }) {
         const target = new Date(customDate).getTime() / 1000;
         expiresIn = Math.max(60, Math.round(target - Date.now() / 1000));
       }
-      const { data } = await users.setTier(user.user_id, selectedTier, expiresIn);
-      toast.success(data?.message || 'تم حفظ التغييرات');
+
+      if (ghostMode) {
+        // في وضع الشبح: استخدام ghost API الصامت مع دعم الإنزال والترقية
+        const { data } = await admin.ghostSetTier(user.user_id, selectedTier, expiresIn);
+        toast.success(data?.message || 'تم حفظ التغييرات (وضع الشبح)');
+      } else {
+        const { data } = await users.setTier(user.user_id, selectedTier, expiresIn);
+        toast.success(data?.message || 'تم حفظ التغييرات');
+      }
+
+      // تنظيف واجهة محرر المستوى - التغيير حُفظ بنجاح
       setShowTierEditor(false);
       setDurationOption(null);
       setCustomDate('');
-      loadDetail();
-      onRefresh?.();
-    } catch { toast.error('فشل حفظ التغييرات'); }
-    setActing(false);
+      setActing(false);
+
+      // تحديث البيانات في الخلفية - فشلها لا يعني فشل الحفظ
+      try {
+        await loadDetail();
+        onRefresh?.();
+      } catch (e) {
+        // فشل تحديث الواجهة فقط، التغيير حُفظ بنجاح في قاعدة البيانات
+        console.warn('[GhostMode] فشل تحديث الواجهة بعد الحفظ:', e);
+      }
+    } catch (err) {
+      console.error('[GhostMode] فشل حفظ التغيير:', err);
+      toast.error('فشل حفظ التغييرات');
+      setActing(false);
+    }
   };
 
   const handleRevoke = async () => {
@@ -246,6 +266,14 @@ export default function UserDetailPanel({ user, onClose, onRefresh }) {
           {/* Tier Editor */}
           {showTierEditor && (
             <div className="px-4 pb-3 border-t border-slate-800 pt-3 space-y-3">
+              {/* ═══ Ghost Mode Banner داخل محرر المستوى ═══ */}
+              {ghostMode && (
+                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-indigo-600/10 border border-indigo-600/20 text-indigo-400 text-xs">
+                  <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
+                  <span>وضع الشبح مفعل - لن يتم إشعار المستخدم بهذا التغيير</span>
+                </div>
+              )}
+
               <div>
                 <label className="block text-xs text-slate-400 mb-1.5">المستوى</label>
                 <div className="flex gap-2">
@@ -255,7 +283,9 @@ export default function UserDetailPanel({ user, onClose, onRefresh }) {
                       onClick={() => setSelectedTier(t)}
                       className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium border transition-colors ${
                         selectedTier === t
-                          ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                          ? ghostMode
+                            ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30'
+                            : 'bg-amber-500/15 text-amber-400 border-amber-500/30'
                           : 'bg-slate-800 text-slate-400 border-slate-700 hover:border-slate-600'
                       }`}
                     >
@@ -274,7 +304,9 @@ export default function UserDetailPanel({ user, onClose, onRefresh }) {
                       onClick={() => setDurationOption(opt.value)}
                       className={`px-2.5 py-1.5 rounded-lg text-xs border transition-colors ${
                         durationOption === opt.value
-                          ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30'
+                          ? ghostMode
+                            ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30'
+                            : 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30'
                           : 'bg-slate-800 text-slate-400 border-slate-700 hover:border-slate-600'
                       }`}
                     >
@@ -295,8 +327,21 @@ export default function UserDetailPanel({ user, onClose, onRefresh }) {
               </div>
 
               <div className="flex gap-2 pt-1">
-                <button onClick={handlePromote} disabled={acting} className="flex-1 btn btn-primary text-xs py-2">
-                  {acting ? 'جاري...' : <span className="flex items-center justify-center gap-1.5"><Save className="w-3.5 h-3.5" /> حفظ التغييرات</span>}
+                <button
+                  onClick={handlePromote}
+                  disabled={acting}
+                  className={`flex-1 btn text-xs py-2 ${
+                    ghostMode
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white border-0'
+                      : 'btn-primary'
+                  }`}
+                >
+                  {acting ? 'جاري...' : (
+                    <span className="flex items-center justify-center gap-1.5">
+                      {ghostMode ? <Ghost className="w-3.5 h-3.5" /> : <Save className="w-3.5 h-3.5" />}
+                      {ghostMode ? 'حفظ بصمت' : 'حفظ التغييرات'}
+                    </span>
+                  )}
                 </button>
                 {currentTier !== 'free' && (
                   <button onClick={handleRevoke} disabled={acting} className="btn btn-danger text-xs py-2">
@@ -441,3 +486,5 @@ function InfoCard({ icon: Icon, label, value }) {
     </div>
   );
 }
+
+
