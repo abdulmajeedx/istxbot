@@ -1,0 +1,150 @@
+# ═══════════════════════════════════════════════════════
+# istxbot — منصة تحميل الوسائط المتعددة (Docker)
+# التشغيل: docker compose up -d
+# الإيقاف: docker compose down
+# السجلات: docker compose logs -f [اسم_الخدمة]
+# ═══════════════════════════════════════════════════════
+
+services:
+  # ═══ بوت تيليجرام الرئيسي ═══
+  bot:
+    build: .
+    container_name: istxbot-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - SERVICE=bot
+      - DB_PATH=/app/data/bot_data.db
+      - DOWNLOAD_DIR=/app/downloads
+    volumes:
+      - ../istxbot:/app/istxbot:ro             # كود البوت (للقراءة فقط)
+      - bot_data:/app/data                       # قاعدة البيانات
+      - downloads:/app/downloads                 # التحميلات
+    command: >
+      sh -c "cd /app/istxbot && python3 -m bot.main"
+    networks:
+      - internal
+    depends_on:
+      - web
+
+  # ═══ موقع الويب العام + API ═══
+  web:
+    build: .
+    container_name: istxbot-web
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - SERVICE=web
+      - WEB_HOST=0.0.0.0
+      - WEB_PORT=8080
+      - DB_PATH=/app/data/bot_data.db
+      - DOWNLOAD_DIR=/app/downloads
+    volumes:
+      - ../istxbot:/app/istxbot:ro
+      - bot_data:/app/data
+      - downloads:/app/downloads
+    command: >
+      sh -c "cd /app/istxbot && python3 -m web.app"
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ═══ لوحة تحكم المشرف (web_control) ═══
+  web-control:
+    build: .
+    container_name: istxbot-web-control
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    env_file:
+      - .env
+    environment:
+      - SERVICE=web-control
+      - WEB_HOST=0.0.0.0
+      - WEB_PORT=8082
+      - DB_PATH=/app/data/bot_data.db
+    volumes:
+      - ../istxbot:/app/istxbot:ro
+      - ../bot_download_telegram/web:/app/web-control:ro   # الكود من المستودع الثاني
+      - bot_data:/app/data
+      - downloads:/app/downloads
+    command: >
+      sh -c "cd /app/web-control && python3 web_control.py"
+    networks:
+      - internal
+
+  # ═══ بوت التطوير (Dev Bot + DeepSeek) ═══
+  dev-bot:
+    build: .
+    container_name: istxbot-dev-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - SERVICE=dev-bot
+    volumes:
+      - ../dev-bot:/app/dev-bot:ro
+      - ../istxbot:/app/istxbot:ro
+      - bot_data:/app/data
+    command: >
+      sh -c "cd /app/dev-bot && python3 dev_bot.py"
+    networks:
+      - internal
+
+  # ═══ لوحة المراقبة ═══
+  monitor:
+    build: .
+    container_name: istxbot-monitor
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    env_file:
+      - .env
+    environment:
+      - SERVICE=monitor
+    volumes:
+      - ../monitor:/app/monitor:ro
+      - bot_data:/app/data
+      - /proc:/host/proc:ro         # للوصول لـ CPU/RAM (psutil)
+      - /sys:/host/sys:ro            # للوصول لمعلومات النظام
+    command: >
+      sh -c "cd /app/monitor && python3 dashboard.py"
+    networks:
+      - internal
+
+  # ═══ Nginx Reverse Proxy ═══
+  nginx:
+    image: nginx:alpine
+    container_name: istxbot-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro          # شهادات SSL (اختياري)
+      - ../istxbot/web/static:/app/static:ro    # ملفات ثابتة
+    depends_on:
+      - web
+      - web-control
+      - monitor
+    networks:
+      - internal
+
+# ═══ volumes ═══
+volumes:
+  bot_data:        # قاعدة بيانات SQLite مشتركة
+  downloads:       # مجلد التحميلات
+
+# ═══ شبكة داخلية ═══
+networks:
+  internal:
+    driver: bridge
