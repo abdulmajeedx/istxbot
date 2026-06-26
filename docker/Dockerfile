@@ -21,7 +21,8 @@ RUN pip install --no-cache-dir \
     aiosqlite>=0.20 \
     cryptography>=41.0 \
     psutil>=5.9 \
-    gunicorn>=21.0
+    gunicorn>=21.0 \
+    python-telegram-bot>=20.0
 
 # ── مجلد العمل ──
 WORKDIR /app

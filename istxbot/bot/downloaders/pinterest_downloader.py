@@ -5,6 +5,7 @@ import time
 import re
 import os
 from pathlib import Path
+from typing import Optional, Tuple
 
 import requests
 from config.settings import settings

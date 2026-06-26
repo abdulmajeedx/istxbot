@@ -14,7 +14,8 @@ from flask import request, g
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from bot.downloaders.tiktok_downloader import TikTokDownloader
-
+from bot.utils.database import DatabaseManager, init_database
+from config.settings import settings
 
 logger = logging.getLogger("web_app")
 

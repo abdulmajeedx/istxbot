@@ -18,7 +18,7 @@ services:
       - DB_PATH=/app/data/bot_data.db
       - DOWNLOAD_DIR=/app/downloads
     volumes:
-      - ../istxbot:/app/istxbot:ro             # كود البوت (للقراءة فقط)
+      - ../istxbot:/app/istxbot                 # كود البوت (يحتاج كتابة للسجلات)
       - bot_data:/app/data                       # قاعدة البيانات
       - downloads:/app/downloads                 # التحميلات
     command: >
@@ -73,7 +73,7 @@ services:
       - DB_PATH=/app/data/bot_data.db
     volumes:
       - ../istxbot:/app/istxbot:ro
-      - ../bot_download_telegram/web:/app/web-control:ro   # الكود من المستودع الثاني
+      - ../../bot_download_telegram/web:/app/web-control:ro   # الكود من المستودع الثاني
       - bot_data:/app/data
       - downloads:/app/downloads
     command: >
