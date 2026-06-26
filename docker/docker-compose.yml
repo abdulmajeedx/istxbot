@@ -134,6 +134,7 @@ services:
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro          # شهادات SSL (اختياري)
+      - /etc/letsencrypt:/etc/letsencrypt:ro    # شهادات Let's Encrypt
       - ../istxbot/web/static:/app/static:ro    # ملفات ثابتة
     depends_on:
       - web
