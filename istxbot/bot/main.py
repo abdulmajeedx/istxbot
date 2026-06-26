@@ -120,7 +120,7 @@ class BotRunner:
                 logger.info("✅ Admin handlers loaded")
             self.dp.include_router(main_router)
             if PRIORITY_QUEUE_ENABLED and init_queue_manager:
-                self.queue_manager = init_queue_manager(
+                self.queue_manager = await init_queue_manager(
                     max_concurrent=3,
                     max_queue=100,
                     timeout=300,
