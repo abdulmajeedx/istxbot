@@ -111,8 +111,9 @@ class TikTokDownloader:
         cookies_path = self._get_cookies_path()
         
         opts = {
-            'format': 'best[ext=mp4]/bestvideo+bestaudio/best',
+            'format': 'bv*[vcodec^=avc1]+ba/b[vcodec^=avc1]/best[ext=mp4]/best',
             'outtmpl': str(self.download_dir / 'tiktok_%(id)s.%(ext)s'),
+            'merge_output_format': 'mp4',
             'quiet': True,
             'no_warnings': True,
             'ignoreerrors': True,

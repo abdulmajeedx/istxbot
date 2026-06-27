@@ -181,21 +181,56 @@ async def _process_download(url: str, key: str, platform: str = "TikTok") -> dic
     try:
         result = await downloader.download(url)
         # downloader.download() يرجع tuple: (success: bool, data: list|str, error: str)
+        file_path = None
         if isinstance(result, tuple):
             if len(result) >= 3:
                 success, data, error = result[0], result[1], result[2]
                 if success:
-                    # البيانات قد تكون مسار ملف أو قائمة
                     file_path = data if isinstance(data, str) else (data[0] if data else None)
-                    return {"success": True, "file_path": file_path, "filename": os.path.basename(file_path) if file_path else "video.mp4"}
-                return {"success": False, "error": str(error) if error else "فشل التحميل"}
-            return {"success": False, "error": "تنسيق نتيجة غير متوقع"}
-        # لو كان dict (للتوافق مع downloaders الأخرى)
-        if isinstance(result, dict):
+                    if not file_path:
+                        return {"success": False, "error": "فشل التحميل"}
+                else:
+                    return {"success": False, "error": str(error) if error else "فشل التحميل"}
+            else:
+                return {"success": False, "error": "تنسيق نتيجة غير متوقع"}
+        elif isinstance(result, dict):
             if result.get('success'):
-                return result
-            return {"success": False, "error": result.get('error', 'فشل التحميل')}
-        return {"success": False, "error": "فشل التحميل"}
+                file_path = result.get('file_path')
+                if not file_path:
+                    return {"success": True, **result}
+            else:
+                return {"success": False, "error": result.get('error', 'فشل التحميل')}
+        else:
+            return {"success": False, "error": "فشل التحميل"}
+
+        # إعادة ترميز الفيديو لـ H.264 إذا كان HEVC (لتوافق المتصفحات)
+        if file_path and os.path.exists(file_path):
+            try:
+                import subprocess
+                probe = subprocess.run(
+                    ['ffprobe', '-v', 'error', '-select_streams', 'v:0',
+                     '-show_entries', 'stream=codec_name', '-of', 'default=noprint_wrappers=1:nokey=1',
+                     file_path],
+                    capture_output=True, text=True, timeout=10
+                )
+                codec = probe.stdout.strip()
+                if codec == 'hevc':
+                    # تحويل لـ H.264
+                    new_path = file_path.rsplit('.', 1)[0] + '_h264.mp4'
+                    subprocess.run([
+                        'ffmpeg', '-y', '-i', file_path,
+                        '-c:v', 'libx264', '-preset', 'fast', '-crf', '23',
+                        '-c:a', 'aac', '-movflags', '+faststart',
+                        new_path
+                    ], capture_output=True, check=True, timeout=120)
+                    os.replace(new_path, file_path)
+                    logger.info(f"Re-encoded HEVC→H.264: {file_path}")
+            except Exception as e:
+                logger.warning(f"FFmpeg re-encode skipped: {e}")
+                # استمر بالفيديو الأصلي حتى لو HEVC
+
+        return {"success": True, "file_path": file_path, "filename": os.path.basename(file_path)}
+
     except Exception as e:
         logger.error(f"Download processing error: {e}")
         return {"success": False, "error": str(e)[:200]}
