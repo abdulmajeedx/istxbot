@@ -12,11 +12,13 @@ from ._auth import AuthMixin
 from ._downloads import DownloadsMixin
 from ._visitors import VisitorsMixin
 from ._ghost import GhostMixin
+from ._activation_keys import ActivationKeysMixin
 
 logger = logging.getLogger(__name__)
 
 
 class DatabaseManager(
+    ActivationKeysMixin,
     GhostMixin,
     VisitorsMixin,
     DownloadsMixin,

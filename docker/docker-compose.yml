@@ -43,6 +43,7 @@ services:
       - WEB_PORT=8080
       - DB_PATH=/app/data/bot_data.db
       - DOWNLOAD_DIR=/app/downloads
+      - SKIP_BOT_INIT=true
     volumes:
       - ../istxbot:/app/istxbot:ro
       - bot_data:/app/data

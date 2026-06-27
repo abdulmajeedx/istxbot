@@ -117,7 +117,12 @@ if __name__ == '__main__':
     host = os.getenv("WEB_HOST", "0.0.0.0")
     port = int(os.getenv("WEB_PORT", "8080"))
 
-    asyncio.run(init_app())
+    # في Docker: البوت له حاويته الخاصة، لا داعي لتهيئته هنا
+    if not os.getenv("SKIP_BOT_INIT"):
+        asyncio.run(init_app())
+    else:
+        asyncio.run(_init_db())
+        logger.info("Bot init skipped (running in separate container)")
 
     print("=" * 50)
     print("🌐 منصة تحميل الوسائط عبر الويب")
