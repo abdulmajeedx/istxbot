@@ -1,0 +1,7 @@
+FROM nginx:alpine
+
+# nginx يعمل كـ root للوصول لـ PHP socket (آمن داخل الحاوية)
+RUN sed -i 's/user  nginx;/user  root;/' /etc/nginx/nginx.conf
+
+# fastcgi_params
+RUN cat /etc/nginx/fastcgi.conf > /etc/nginx/fastcgi_params 2>/dev/null || true

@@ -125,7 +125,9 @@ services:
 
   # ═══ Nginx Reverse Proxy ═══
   nginx:
-    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
     container_name: istxbot-nginx
     restart: unless-stopped
     ports:
@@ -136,6 +138,8 @@ services:
       - ./nginx/ssl:/etc/nginx/ssl:ro          # شهادات SSL (اختياري)
       - /etc/letsencrypt:/etc/letsencrypt:ro    # شهادات Let's Encrypt
       - ../istxbot/web/static:/app/static:ro    # ملفات ثابتة
+      - /home/ngm/tiktok-wp:/app/wp:ro          # WordPress
+      - /run/php/php8.1-fpm.sock:/run/php/php8.1-fpm.sock  # PHP-FPM سوكيت
     depends_on:
       - web
       - web-control
