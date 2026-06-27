@@ -197,9 +197,22 @@ async def _process_download(url: str, key: str, platform: str = "TikTok") -> dic
     downloader = _get_downloader(platform)
     try:
         result = await downloader.download(url)
-        if result and result.get('success'):
-            return result
-        return {"success": False, "error": result.get('error', 'فشل التحميل') if result else 'فشل التحميل'}
+        # downloader.download() يرجع tuple: (success: bool, data: list|str, error: str)
+        if isinstance(result, tuple):
+            if len(result) >= 3:
+                success, data, error = result[0], result[1], result[2]
+                if success:
+                    # البيانات قد تكون مسار ملف أو قائمة
+                    file_path = data if isinstance(data, str) else (data[0] if data else None)
+                    return {"success": True, "file_path": file_path, "filename": os.path.basename(file_path) if file_path else "video.mp4"}
+                return {"success": False, "error": str(error) if error else "فشل التحميل"}
+            return {"success": False, "error": "تنسيق نتيجة غير متوقع"}
+        # لو كان dict (للتوافق مع downloaders الأخرى)
+        if isinstance(result, dict):
+            if result.get('success'):
+                return result
+            return {"success": False, "error": result.get('error', 'فشل التحميل')}
+        return {"success": False, "error": "فشل التحميل"}
     except Exception as e:
         logger.error(f"Download processing error: {e}")
         return {"success": False, "error": str(e)[:200]}
