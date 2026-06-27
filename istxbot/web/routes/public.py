@@ -122,29 +122,12 @@ def api_download():
     if not url:
         return jsonify({"success": False, "message": "الرجاء إدخال رابط الفيديو"}), 400
 
-    # Validate key or provide free tier
-    if not key:
-        key_result = asyncio.run(db.validate_activation_key("__free_tier__", platform))
-    else:
-        key_result = asyncio.run(db.validate_activation_key(key, platform))
-
-    if not key_result or not key_result.get('valid'):
-        msg = key_result.get('message', 'مفتاح غير صالح') if key_result else 'مفتاح غير صالح'
-        return jsonify({"success": False, "message": msg}), 403
-
-    # Check daily limit
-    daily_count = asyncio.run(db.get_daily_download_count(0))
-    limit = get_daily_download_limit()
-    if daily_count >= limit:
-        return jsonify({"success": False, "message": f"تم تجاوز الحد اليومي ({limit} تحميلات)"}), 429
+    # تحميل مجاني للجميع — بدون مفتاح تفعيل
 
     # Process download
     try:
-        result = asyncio.run(_process_download(url, key, platform))
+        result = asyncio.run(_process_download(url, None, platform))
         if result.get('success'):
-            # Consume key usage
-            if key and key != "__free_tier__":
-                asyncio.run(db.consume_activation_key(key))
 
             # Record download
             asyncio.run(db.record_download(
