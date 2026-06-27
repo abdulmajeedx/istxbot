@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚧 صيانة — istx.io</title>
+    <style>
+        :root {
+            --bg: #f5f0e8;
+            --sketch: #2c2416;
+            --sketch-light: #5c4a2e;
+            --accent: #d4692b;
+            --paper: #faf7f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Tajawal', 'Cairo', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(0,0,0,0.02) 1px, transparent 1px),
+                radial-gradient(circle at 80% 70%, rgba(0,0,0,0.03) 2px, transparent 2px),
+                radial-gradient(circle at 50% 50%, rgba(0,0,0,0.01) 3px, transparent 3px);
+            background-size: 40px 40px, 60px 60px, 30px 30px;
+        }
+
+        /* تأثير الورقة الممزقة */
+        .paper {
+            background: var(--paper);
+            border-radius: 4px;
+            padding: 60px 40px 50px;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            box-shadow:
+                2px 3px 20px rgba(0,0,0,0.1),
+                0 0 0 1px rgba(0,0,0,0.05);
+            /* حواف غير منتظمة — تأثير الورق المرسوم */
+            clip-path: polygon(
+                0% 2%, 1.5% 0%, 3% 1.5%, 5% 0.5%, 7% 2%,
+                10% 0%, 13% 1%, 16% 0.5%, 20% 1.5%, 24% 0%,
+                28% 2%, 32% 0.5%, 36% 1%, 40% 0%, 44% 2%,
+                48% 0.5%, 52% 1.5%, 56% 0%, 60% 2%, 64% 0.5%,
+                68% 1%, 72% 0%, 76% 2%, 80% 0.5%, 84% 1.5%,
+                88% 0%, 92% 2%, 96% 0.5%, 98% 1%, 100% 2%,
+                99% 20%, 100% 40%, 98% 60%, 100% 80%, 98% 100%,
+                96% 98%, 92% 99.5%, 88% 98%, 84% 100%, 80% 98.5%,
+                76% 99%, 72% 100%, 68% 98%, 64% 99.5%, 60% 98%,
+                56% 100%, 52% 98.5%, 48% 99%, 44% 100%, 40% 98%,
+                36% 99.5%, 32% 98%, 28% 100%, 24% 98.5%, 20% 99%,
+                16% 100%, 12% 98%, 8% 99.5%, 4% 98%, 0% 100%,
+                0% 80%, 2% 60%, 0% 40%, 2% 20%
+            );
+        }
+
+        /* تأثير الدبابيس */
+        .paper::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-3deg);
+            width: 28px;
+            height: 18px;
+            background: linear-gradient(135deg, #d4a574 0%, #b87040 50%, #c48050 100%);
+            border-radius: 50%;
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+            z-index: 2;
+        }
+        .paper::after {
+            content: '';
+            position: absolute;
+            top: -14px;
+            left: calc(50% + 60px);
+            width: 22px;
+            height: 16px;
+            background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 50%, #b0b0b0 100%);
+            border-radius: 50%;
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.4);
+            z-index: 2;
+        }
+
+        /* شريط لاصق */
+        .tape {
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            width: 80px;
+            height: 35px;
+            background: rgba(255,240,200,0.7);
+            transform: rotate(-8deg);
+            z-index: 1;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-radius: 1px;
+        }
+
+        /* الرسم بالقلم */
+        .sketch-icon {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .sketch-icon svg {
+            width: 100px;
+            height: 100px;
+            filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.08));
+        }
+        .sketch-icon svg path,
+        .sketch-icon svg circle,
+        .sketch-icon svg line,
+        .sketch-icon svg rect {
+            fill: none;
+            stroke: var(--sketch);
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 400;
+            stroke-dashoffset: 400;
+            animation: sketchIn 2s ease forwards;
+        }
+        .sketch-icon svg circle:nth-child(2) { animation-delay: 0.3s; }
+        .sketch-icon svg line:nth-child(3) { animation-delay: 0.6s; }
+        .sketch-icon svg path:nth-child(4) { animation-delay: 0.9s; }
+        .sketch-icon svg path:nth-child(5) { animation-delay: 1.2s; }
+
+        @keyframes sketchIn {
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* العناوين والنصوص */
+        h1 {
+            font-family: 'Tajawal', 'Cairo', sans-serif;
+            font-size: 2.2em;
+            font-weight: 900;
+            color: var(--sketch);
+            text-align: center;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+            position: relative;
+        }
+        h1::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+            margin: 12px auto 0;
+            border-radius: 2px;
+            transform: rotate(-1deg);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--sketch-light);
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        /* الأزرار */
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            border: 2px solid var(--sketch);
+            background: var(--paper);
+            color: var(--sketch);
+            text-decoration: none;
+            font-family: 'Tajawal', 'Cairo', sans-serif;
+            font-size: 1.1em;
+            font-weight: 700;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            /* تأثير الرسم اليدوي */
+            box-shadow:
+                3px 3px 0 rgba(0,0,0,0.05),
+                inset -1px -1px 0 rgba(0,0,0,0.05);
+        }
+        .btn:hover {
+            background: var(--sketch);
+            color: var(--paper);
+            transform: translate(-1px, -1px);
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.08);
+        }
+        .btn:active {
+            transform: translate(0, 0);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.05);
+        }
+
+        .btn.primary {
+            background: var(--sketch);
+            color: var(--paper);
+            border-color: var(--sketch);
+        }
+        .btn.primary:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* تذييل مرسوم */
+        .footer-sketch {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(0,0,0,0.1);
+        }
+        .footer-sketch p {
+            color: var(--sketch-light);
+            font-size: 0.85em;
+            opacity: 0.7;
+        }
+        .footer-sketch .signature {
+            font-family: 'Tajawal', 'Cairo', sans-serif;
+            font-style: italic;
+            color: var(--sketch);
+            font-size: 1.3em;
+            margin-top: 6px;
+            opacity: 0.5;
+            transform: rotate(-2deg);
+            display: inline-block;
+        }
+
+        /* تأثيرات قلم إضافية */
+        .doodle {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0.06;
+            z-index: -1;
+        }
+        .doodle.top-right {
+            top: 30px;
+            right: 30px;
+            width: 120px;
+            height: 120px;
+            border: 2px solid var(--sketch);
+            border-radius: 50%;
+            border-style: dashed;
+            transform: rotate(15deg);
+        }
+        .doodle.bottom-left {
+            bottom: 40px;
+            left: 40px;
+            width: 80px;
+            height: 80px;
+            border: 2px solid var(--sketch);
+            border-style: wavy;
+            transform: rotate(-10deg);
+        }
+
+        @media (max-width: 480px) {
+            .paper { padding: 40px 24px 35px; }
+            h1 { font-size: 1.6em; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="doodle top-right"></div>
+    <div class="doodle bottom-left"></div>
+
+    <div class="paper">
+        <div class="tape"></div>
+
+        <!-- أيقونة الأدوات المرسومة -->
+        <div class="sketch-icon">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <!-- مفتاح ربط -->
+                <path d="M25,75 L35,65 L55,85 L45,95 Z" />
+                <circle cx="22" cy="78" r="10" />
+                <circle cx="58" cy="82" r="8" />
+                <!-- ترس -->
+                <circle cx="52" cy="50" r="18" />
+                <circle cx="52" cy="50" r="8" />
+                <!-- خطوط حركة -->
+                <line x1="18" y1="30" x2="28" y2="38" />
+                <line x1="8" y1="42" x2="22" y2="46" />
+                <!-- نقاط */
+                <circle cx="80" cy="35" r="3" fill="#2c2416" />
+                <circle cx="88" cy="28" r="2" fill="#2c2416" />
+                <circle cx="85" cy="42" r="2.5" fill="#2c2416" />
+            </svg>
+        </div>
+
+        <h1>🚧 جارٍ الصيانة</h1>
+        <p class="subtitle">
+            الموقع في ورشة تطوير — نعمل على تحسينات جديدة<br>
+            نعود إليك قريباً ✨
+        </p>
+
+        <div class="actions">
+            <a href="https://inspiredownloader.com/" class="btn primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                </svg>
+                inspiredownloader.com
+            </a>
+            <a href="https://t.me/istxbot" class="btn">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.938z"/>
+                </svg>
+                بوت تيليجرام @istxbot
+            </a>
+        </div>
+
+        <div class="footer-sketch">
+            <p>شكراً لصبرك 🤍</p>
+            <span class="signature">— فريق istx</span>
+        </div>
+    </div>
+
+</body>
+</html>

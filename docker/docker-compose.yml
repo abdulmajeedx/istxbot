@@ -140,6 +140,7 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:ro    # شهادات Let's Encrypt
       - ../istxbot/web/static:/app/static:ro    # ملفات ثابتة
       - /home/ngm/tiktok-wp:/app/wp:ro          # WordPress
+      - ../istxbot/web/templates/maintenance.html:/app/maintenance/maintenance.html:ro  # صيانة
       - /run/php/php8.1-fpm.sock:/run/php/php8.1-fpm.sock  # PHP-FPM سوكيت
     depends_on:
       - web
